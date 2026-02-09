@@ -1,3 +1,4 @@
+
 我需要功能模块儿是：在本地localhost上显示数据库里的job 信息
 
 我本地的mongodb （mongodb://localhost:27017/491jobseeker) 的 unified_jobs database 里已经有2026_02_07的collection。我需要前后端去吧这个collection里的所有数据展示出来。 \                                                                                
@@ -19,11 +20,12 @@
 
 注意， 我需要用TDD 方法去进行开发。 开发阶段我会用到agent teams， 让team lead agent 帮我生成多个agents 去分工开发。
 
-等上面企划工作完成， 我们需要创建以下 cc agent teams（开发组）： 
+等上面企划工作完成，我需要我人工检查vibe kanban里的tickets。 然后 我们需要创建以下 cc agent teams（开发组）： 
 1. team lead ： 这是orchestrator agent。也需要扮演project management角色。 他可以调度多个agents去做不同的任务。 并且通过vibe kanban MCP 去实施监控和更新kanban里的每个ticket的状态。 根据状态的不同，可以调度agent去执行ticket里的内容。比如： 当一个ticket 需要开始时， team lead 需要根据ticket 的功能需要去调度不同的agent 去执行某一个具体的任务。  
 2. Frontend： 这是前段 agent。 他需要执行所有前段开发任务，包括UI设计。 以及进行前段的 link+typecheck(eslint/typescript) unit test等。 任务工作repo是/Users/hulin/Documents/projects/491jobseeker/v5/modules/frontend
 3. Backend： 这是后端agent， 他需要执行所有的后端开发和数据库开发任务。 和api集成测试。 任务工作repo是/Users/hulin/Documents/projects/491jobseeker/v5/modules/backend
 4. Test： 进行e2e 和功能测试，和code review。确保服务按照期望的结果正常运行。任务工作repo是/Users/hulin/Documents/projects/491jobseeker/v5/modules/test。
+5. 注意， 每个agent 在repo里执行某个epic时必须要创建一个feature branch（从main里拉去） 然后进行开发。 等Test agent 说成功， team lead 需要把ticket 移动到complete。 然后raise 一个PR。 
 
 vibe kanban： 
 todo： 为开始的任务。企划组需要在这里开启ticket， 开发组的team lead 得到通知说这里有新ticket， 根据ticket里的内容安排给不同的agent去执行任务。 
