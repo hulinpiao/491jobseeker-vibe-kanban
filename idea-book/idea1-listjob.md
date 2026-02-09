@@ -1,34 +1,243 @@
+# Idea 1: List Job Display Feature
 
-我需要功能模块儿是：在本地localhost上显示数据库里的job 信息
+## 功能需求
 
-我本地的mongodb （mongodb://localhost:27017/491jobseeker) 的 unified_jobs database 里已经有2026_02_07的collection。我需要前后端去吧这个collection里的所有数据展示出来。 \                                                                                
-  功能：                                                                 
-  1。 需要有search keyword/location 功能。 \\         
-  2。 list jobs。 默认按照日期排序。 \ 
-  3。 listed jobs 只显示 job title，和部分job detail 内容。 \                 
-  4。 点击job，需要跳转到job detail 页面。 \                                                                         
+在本地 localhost 显示 MongoDB 数据库中的 job 信息。
 
-结合当前v5里的的cc agent teams 和vibe kanban。 我的想法是： 
+**数据源：**
+- MongoDB: `mongodb://localhost:27017/491jobseeker`
+- Database: `unified_jobs`
+- Collection: `2026_02_07`
 
-首先是功能开发前的市场调研，企划和架构设计。
-请择机选择superpowers skill 去分析。使用苏格拉底式分析法去分析feature request 并且随时给我提问去分析核心功能。 
-  
-  并在/Users/hulin/Documents/projects/491jobseeker/v5/modules/vibe-kanban里生成PRD， solution architecture，以及 task plan文档。   
- -  solution architecture 需要符合当前codebase（v5） 里的 架构和要求。 
-  - task plan 文档需要创建最少的Epic， 每个Epic下需要创建tasks。 每个task需要有详细的操作md文档（包括标签来说明需要在那个repo进行开发 和详细的task plan）。 以便后面上传vibe tickets。 
-  - 最后，以每个epic为一个ticket。并且在ticket 下附加所有在epic下的task md文档。 ticket descrption 需要说明这个epic 简要和成功指标，还有可能所需要的skills（比如test agent 可能需要E2E test skill，前段agent 根据架构可能需要react或者nextjs skill 等等） 还有，以什么顺序去执行eipc里的tasks。 
+**核心功能：**
+1. 🔍 Search keyword/location
+2. 📋 List jobs（默认按日期排序）
+3. 👁️ Preview（显示 job title 和部分 detail）
+4. 🔗 点击跳转到 job detail 页面
 
-注意， 我需要用TDD 方法去进行开发。 开发阶段我会用到agent teams， 让team lead agent 帮我生成多个agents 去分工开发。
+## 工作流程
 
-等上面企划工作完成，我需要我人工检查vibe kanban里的tickets。 然后 我们需要创建以下 cc agent teams（开发组）： 
-1. team lead ： 这是orchestrator agent。也需要扮演project management角色。 他可以调度多个agents去做不同的任务。 并且通过vibe kanban MCP 去实施监控和更新kanban里的每个ticket的状态。 根据状态的不同，可以调度agent去执行ticket里的内容。比如： 当一个ticket 需要开始时， team lead 需要根据ticket 的功能需要去调度不同的agent 去执行某一个具体的任务。  
-2. Frontend： 这是前段 agent。 他需要执行所有前段开发任务，包括UI设计。 以及进行前段的 link+typecheck(eslint/typescript) unit test等。 任务工作repo是/Users/hulin/Documents/projects/491jobseeker/v5/modules/frontend
-3. Backend： 这是后端agent， 他需要执行所有的后端开发和数据库开发任务。 和api集成测试。 任务工作repo是/Users/hulin/Documents/projects/491jobseeker/v5/modules/backend
-4. Test： 进行e2e 和功能测试，和code review。确保服务按照期望的结果正常运行。任务工作repo是/Users/hulin/Documents/projects/491jobseeker/v5/modules/test。
-5. 注意， 每个agent 在repo里执行某个epic时必须要创建一个feature branch（从main里拉去） 然后进行开发。 等Test agent 说成功， team lead 需要把ticket 移动到complete。 然后raise 一个PR。 
+### 阶段 1：企划与架构设计（Planning）
 
-vibe kanban： 
-todo： 为开始的任务。企划组需要在这里开启ticket， 开发组的team lead 得到通知说这里有新ticket， 根据ticket里的内容安排给不同的agent去执行任务。 
-in process： team lead在开始任务前需要把ticket 移动到这里。并且根据任务安排frontend或者backend agent去工作。 当任务结束后每个agent 需要告诉team lead， 任务结束。team lead 会把ticket 移动到下一个阶段（in review）。 
-in review： 当ticket 到这个阶段， test agent 需要工作。 如果所有测试通过， test agent 需要告诉 team lead。然后team lead 把ticket 放到done。 如果测试没有通过。需要告诉我team lead。并且team lead 要放回in process 并且安排agent 去修复。 
-done： 完成的任务。 
+**目标：** 生成 PRD、Solution Architecture、Task Plan
+
+**使用 Skills：**
+- `brainstorming` - 分析功能需求
+- `writing-plans` - 创建执行计划
+
+**输出文档（保存在 `modules/vibe-kanban/`）：**
+1. **PRD** - 产品需求文档
+2. **solution-architecture.md** - 技术架构设计（符合 v5 架构）
+3. **task-plan.md** - 任务计划
+
+**Task Plan 要求：**
+- 创建最少的 Epic
+- 每个 Epic 下创建 Tasks
+- 每个 Task 需要：
+  - 🏷️ **Tags** - 标识 target repo（frontend/backend/test）和 priority
+  - 📄 **详细操作文档** - 包括 task plan
+  - 📦 **所需 Skills** - 比如 test agent 可能需要 E2E test skill
+
+### 阶段 2：Ticket 创建（Vibe Kanban）
+
+**自动生成逻辑：**
+根据 Epic 的 Tags 自动创建 Ticket
+
+**Epic → Ticket 映射规则：**
+
+| Epic Tags | Ticket 分配给 Agent |
+|-----------|-------------------|
+| `backend`, `P0` | Backend Agent（整个 Epic） |
+| `frontend`, `P0` | Frontend Agent（整个 Epic） |
+| `test-backend`, `P1` | Test-Backend Agent |
+| `test-frontend`, `P1` | Test-Frontend Agent |
+| `infrastructure`, `P1` | Team Lead（协调） |
+
+**Ticket 结构：**
+```markdown
+## Ticket: [Epic Name]
+
+### 描述
+简要说明这个 Epic 的功能
+
+### 成功指标
+- [ ] 指标 1
+- [ ] 指标 2
+
+### 包含的 Tasks
+- Task 1 (path/to/task1.md)
+- Task 2 (path/to/task2.md)
+
+### 所需 Skills
+- Frontend: React/Next.js
+- Test: E2E testing
+
+### 执行顺序
+1. Task 1 → Task 2 → Task 3
+```
+
+### 阶段 3：Agent Team 配置（CC 自动配置）
+
+**Team Lead 根据 Ticket 的 Tags 自动创建和配置 Agents**
+
+**Agent 配置规则：**
+
+| Agent Type | 触发条件 | 工作目录 | 职责 |
+|------------|----------|----------|------|
+| **Team Lead** | 始终运行 | 主仓库 | Orchestrator、项目管理、调度 agents |
+| **Frontend Agent** | Ticket tag: `frontend` | `modules/frontend` | UI 开发、组件开发、样式、路由 |
+| **Backend Agent** | Ticket tag: `backend` | `modules/backend` | API 开发、数据库、业务逻辑 |
+| **Test-Frontend Agent** | Ticket tag: `test-frontend` | `modules/test` | 前端功能测试、E2E 测试 |
+| **Test-Backend Agent** | Ticket tag: `test-backend` | `modules/test` | 后端 API 测试、集成测试 |
+| **Review Agent** | Ticket tag: `code-review` | 对应的 repo | 代码审查 |
+
+**Agent 创建流程（由 Team Lead 执行）：**
+1. 分析 Ticket 的 Tags
+2. 搜索并安装所需的 Skills
+3. 创建对应的 Agent
+4. 分配 Ticket 给 Agent
+5. 监控执行进度
+
+### 阶段 4：开发执行（Development）
+
+**Vibe Kanban 工作流：**
+
+```
+┌─────────┐
+│   TODO   │ ← 企划组在这里开启 Ticket
+└────┬────┘
+     │ Team Lead 移动到 In Process 并分配 Agent
+     ↓
+┌─────────────┐
+│ IN PROCESS   │ ← Agent 执行 Epic 中的所有 Tasks
+└────┬─────────┘
+     │ Agent 完成后通知 Team Lead
+     ↓
+┌─────────────┐
+│  IN REVIEW   │ ← Test Agent 执行测试
+└────┬─────────┘
+     │ 测试通过 → Done
+     │ 测试失败 → 返回 IN PROCESS
+     ↓
+┌───────────┐
+│   DONE     │ ← Team Lead 移动到这里
+└───────────┘
+```
+
+**开发规则（TDD）：**
+1. 每个从 main 分支拉取 **feature branch**
+2. 按照 Epic 中的 Tasks 顺序执行
+3. 使用 TDD：先写测试 → 再写代码 → 重构
+4. 完成后通知 Team Lead
+
+### 阶段 5：Review & Merge
+
+**测试通过后：**
+1. Team Lead 将 Ticket 移到 Done
+2. Team Lead 创建 Pull Request
+3. Review Agent 代码审查
+4. 合并到 main 分支
+
+## CC Agent Teams（开发组）
+
+### 1. Team Lead（Orchestrator）
+**职责：**
+- 项目管理和调度
+- 根据 Ticket Tags 创建和配置 Agents
+- 通过 Vibe Kanban MCP 监控进度
+- 更新 Ticket 状态
+- 协调 Agents 之间的协作
+
+**不需要 prompt 里 hardcoding！**
+
+### 2. Frontend Agent
+**触发条件：** Ticket tag 包含 `frontend`
+**工作目录：** `modules/frontend`
+**职责：**
+- UI 开发
+- 组件开发
+- 样式和布局
+- 前端路由
+- 前端单元测试
+
+**需要的 Skills：**（CC 根据 Ticket 自动搜索安装）
+- React/Next.js 相关技能
+- CSS/Tailwind 技能
+- 前端测试技能
+
+### 3. Backend Agent
+**触发条件：** Ticket tag 包含 `backend`
+**工作目录：** `modules/backend`
+**职责：**
+- API 开发
+- 数据库操作
+- 业务逻辑实现
+- 后端单元测试
+- API 集成测试
+
+**需要的 Skills：**（CC 根据 Ticket 自动搜索安装）
+- Node.js/Python 技能
+- 数据库技能
+- API 设计技能
+
+### 4. Test-Frontend Agent
+**触发条件：** Ticket tag 包含 `test-frontend`
+**工作目录：** `modules/test`
+**职责：**
+- 前端功能测试
+- 前端 E2E 测试
+- 前端组件测试
+
+### 5. Test-Backend Agent
+**触发条件：** Ticket tag 包含 `test-backend`
+**工作目录：** `modules/test`
+**职责：**
+- 后端 API 测试
+- 集成测试
+- 后端功能测试
+
+### 6. Review Agent
+**触发条件：** 代码需要审查
+**工作目录：** 对应的 repo
+**职责：**
+- 代码审查
+- 质量检查
+- 确保 SOLID/KISS/YAGNI/DRY 原则
+
+## Ticket Tags 规范
+
+**Priority Tags:**
+- `P0` - 紧急重要
+- `P1` - 重要
+- `P2` - 一般
+
+**Module Tags:**
+- `frontend` - 前端开发
+- `backend` - 后端开发
+- `test-frontend` - 前端测试
+- `test-backend` - 后端测试
+- `infrastructure` - 基础设施
+
+**Type Tags:**
+- `feature` - 新功能
+- `bug` - Bug 修复
+- `refactor` - 重构
+
+**示例 Ticket Tags:**
+```markdown
+## Epic: Backend API for Job Search
+Tags: P0, feature, backend, test-backend
+→ 分配给：Backend Agent + Test-Backend Agent
+
+## Epic: Frontend Job List Page
+Tags: P0, feature, frontend, test-frontend
+→ 分配给：Frontend Agent + Test-Frontend Agent
+```
+
+## 关键原则
+
+1. **企划阶段配置**：Agent 的技能、职责都在企划阶段确定，不在 prompt 里 hardcode
+2. **Tag 驱动分配**：根据 Ticket 的 Tags 自动分配给对应的 Agent
+3. **Epic 完整性**：整个 Epic 分配给一个 Agent（而不是拆散）
+4. **TDD 开发**：所有开发使用测试驱动开发
+5. **Feature Branch**：每个 Epic 在独立的 feature branch 上开发
